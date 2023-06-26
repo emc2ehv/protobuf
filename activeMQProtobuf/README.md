@@ -1,6 +1,6 @@
 # Dependencies
 - ActiveMQ Artemis broker
-- Protobuf
+- Protobuf (Base and python libraries)
 - Robot Framework
 - Apache QPID Proton
 
