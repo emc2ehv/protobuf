@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message Hello {
+    optional string header = 1;
+    optional string testMessage = 2;
+}
