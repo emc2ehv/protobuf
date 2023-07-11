@@ -1,6 +1,7 @@
 from proton import Message, Delivery
 from proton.handlers import MessagingHandler
 from proton.reactor import Container
+import sys
 import simpleMessage_pb2
 
 
@@ -10,7 +11,12 @@ host = 'localhost'  # Artemis broker host
 port = 5672  # Default port for AMQP
 username = 'admin'  # Username for authentication
 password = 'admin'  # Password for authentication
-queue_name = 'my_queue'  # Name of the queue to consume messages from
+
+if(len(sys.argv) != 2):
+    print("Provide Queue name as argument")
+    sys.exit()
+
+queue_name = sys.argv[1]  # Name of the queue to consume messages from
 
 
 class Consumer(MessagingHandler):
@@ -37,7 +43,16 @@ class Consumer(MessagingHandler):
         event.delivery.update(Delivery.ACCEPTED)
 
     def on_accepted(self, event):
-        event.connection.close()
+        event.receiver.flow(1)
+
+    def on_rejected(self, event):
+        event.receiver.flow(1)
+
+    def on_released(self, event):
+        event.receiver.flow(1)
+
+    def on_settled(self, event):
+        event.receiver.flow(1)
 
 
 # Create a consumer instance and run the reactor

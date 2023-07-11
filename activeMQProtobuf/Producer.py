@@ -3,6 +3,7 @@ import simpleMessage_pb2
 from proton import Message
 from proton.handlers import MessagingHandler
 from proton.reactor import Container
+import sys
 
 
 # Connection parameters
@@ -10,7 +11,11 @@ host = 'localhost'  # Artemis broker host
 port = 5672  # Default port for AMQP
 username = 'admin'  # Username for authentication
 password = 'admin'  # Password for authentication
-queue_name = 'my_queue'  # Name of the queue to send messages to
+if(len(sys.argv) != 2):
+    print("Provide address name as argument")
+    sys.exit()
+
+address = sys.argv[1] # Name of the queue to send messages to
 
 
 class Producer(MessagingHandler):
@@ -22,7 +27,7 @@ class Producer(MessagingHandler):
 
     def on_start(self, event):
         conn = event.container.connect(url=self.url, user=username, password=password)
-        event.container.create_sender(conn, target=queue_name)
+        event.container.create_sender(conn, target=address)
 
     def on_sendable(self, event):
         message = Message(subject='Hello', body=self.serializedMessage)
